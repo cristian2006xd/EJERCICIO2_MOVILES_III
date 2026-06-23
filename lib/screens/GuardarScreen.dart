@@ -20,6 +20,7 @@ Widget formulario(){
   return (
     Container(
       width: 350,
+      
       child: Center(
         child: Column(
           children: [
