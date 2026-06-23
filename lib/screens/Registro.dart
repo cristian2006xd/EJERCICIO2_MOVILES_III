@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Registro extends StatelessWidget {
@@ -6,40 +7,60 @@ class Registro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center( child: Container(
-        width: 300,
-        child: formulario())),
+      body: Center(child: Container(width: 300, child: formulario( context ))),
     );
   }
 }
 
-Widget formulario(){
+Widget formulario( context ) {
   TextEditingController correo = TextEditingController();
   TextEditingController contrasenia = TextEditingController();
   TextEditingController nick = TextEditingController();
   TextEditingController edad = TextEditingController();
 
-  return Column( 
+  return Column(
     mainAxisSize: MainAxisSize.min,
     children: [
-    TextField(
-      controller: correo,
-    ),
-    
-    TextField(
-      controller: contrasenia,
-    ),
+      TextField(controller: correo),
 
-    TextField(
-      controller: nick,
-    ),
+      TextField(controller: contrasenia),
 
-    TextField(
-      controller: edad,
-    ),
+      TextField(controller: nick),
 
-    FilledButton.icon(onPressed: () => (), 
-    label: Text("Registro"), 
-    icon: Image.asset("assets/icons/acceso.png", width: 30,),),
-  ],);
+      TextField(controller: edad),
+
+      FilledButton.icon(
+        onPressed: () => registro(context, correo, contrasenia),
+        label: Text("Registro"),
+        icon: Image.asset("icons/acceso.png", width: 30),
+      ),
+    ],
+  );
+}
+
+Future<void> registro(context, correo, contrasenia) async {
+  try {
+    final credential = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+          email: correo.text,
+          password: contrasenia.text,
+        );
+
+    Navigator.pushNamed(context, "/guardar");
+
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'weak-password') {
+      print('The password provided is too weak.');
+    } else if (e.code == 'email-already-in-use') {
+      print('The account already exists for that email.');
+
+      showDialog(context: context, builder: (context) =>
+      AlertDialog(
+        title: Text("ERROR"),
+        content: Text("El correo ya esta en uso"),
+      ),);
+    }
+  } catch (e) {
+    print(e);
+  }
 }

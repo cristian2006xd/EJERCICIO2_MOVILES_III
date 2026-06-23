@@ -1,57 +1,52 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-
+ 
 class Guardarscreen extends StatelessWidget {
   const Guardarscreen({super.key});
-
+ 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: formulario(),
-    );
+    return Scaffold(appBar: AppBar(), body: formulario(context));
   }
 }
-
-Widget formulario(){
+ 
+Widget formulario(context) {
   TextEditingController placa = TextEditingController();
   TextEditingController marca = TextEditingController();
   TextEditingController precio = TextEditingController();
-
-  return (
-    Container(
+ 
+  return (Center(
+    child: Container(
       width: 350,
-      
-      child: Center(
-        child: Column(
-          children: [
-            TextField(
-              controller: placa,
-              decoration: InputDecoration(
-                hintText: 'Correo electrónico',
-              ),
-            ),
-            TextField(
-              controller: marca,
-              decoration: InputDecoration(
-                hintText: 'Contraseña',
-              ),
-              obscureText: true,
-            ),
-            TextField(
-              controller: precio,
-              decoration: InputDecoration(
-                hintText: 'Nick',
-              ),
-            ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(controller: placa),
+          TextField(controller: marca),
+          TextField(controller: precio),
+ 
+          ElevatedButton(
+            onPressed: () => 
+            guardar(context, placa, marca, precio), 
+            child: Text("Guardar")),
+
             ElevatedButton(
-              onPressed: () {
-              },
-              child: Text('Guardar'),
-            ),
-          ],
-        ),
+            onPressed: () => 
+            Navigator.pushNamed(context, "/leer"), 
+            child: Text("Leer")),
+        ],
       ),
-    )
-  );
+    ),
+  ));
+}
+
+Future<void> guardar(context, placa, marca, precio) async {
+  DatabaseReference ref = FirebaseDatabase.instance.ref("autos/${placa.text}");
+
+await ref.set({
+  "marca": marca.text,
+  "precio": double.parse(precio.text),
+  
+});
 }
 
