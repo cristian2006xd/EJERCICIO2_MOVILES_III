@@ -1,4 +1,6 @@
+import 'package:app_12/main.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Loginscreen extends StatelessWidget {
   const Loginscreen({super.key});
@@ -8,12 +10,12 @@ class Loginscreen extends StatelessWidget {
     return Scaffold(
       body: Center( child: Container(
         width: 300,
-        child: formulario())),
+        child: formulario( context ))),
     );
   }
 }
 
-Widget formulario(){
+Widget formulario( context ){
   TextEditingController correo = TextEditingController();
   TextEditingController contrasenia = TextEditingController();
   return Column( 
@@ -27,6 +29,20 @@ Widget formulario(){
       controller: contrasenia,
     ),
 
-    FilledButton.icon(onPressed: () => (), label: Text("Login"), icon: Icon(Icons.login_outlined),)
+    FilledButton.icon(
+      onPressed: () => login(context, correo, contrasenia), 
+      label: Text("Login"), 
+      icon: Icon(Icons.login_outlined),)
   ],);
+}
+
+Future<void> login( context, correo, contrasenia ) async {
+  final AuthResponse res = await supabase.auth.signUp(
+  email: correo.text,
+  password: contrasenia.text,
+);
+final Session? session = res.session;
+final User? user = res.user;
+
+Navigator.pushNamed(context, "/guardar");
 }
