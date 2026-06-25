@@ -19,16 +19,30 @@ await Supabase.initialize(
 }
 final supabase = Supabase.instance.client;
  
-class AppFire extends StatelessWidget {
+class AppFire extends StatefulWidget {
   const AppFire({super.key});
- 
+
+  @override
+  State<AppFire> createState() => _AppFireState();
+}
+
+class _AppFireState extends State<AppFire> {
+
+  bool modoOscuro = true;
+
+  void cambiarTema(){
+    setState(() {
+      modoOscuro = !modoOscuro;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.dark(),
-      initialRoute: "/",
+      theme: modoOscuro ? ThemeData.dark() : ThemeData.light(),
+      initialRoute: "/guardar",
       routes: {
-        "/": (context) => Welcomescreen(),
+        "/": (context) => Welcomescreen(cambiarTema),
         "/login": (context) => Loginscreen(),
         "/registro": (context) => RegistroScreen(),
         "/guardar": (context) => Guardarscreen(),
